@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -75,21 +76,40 @@ namespace unclesam.Controllers
 
             List<VmTrainRoute> trainroutes = new List<VmTrainRoute>();
             //then check if it is direct train to destination 
+
+            // these are the direct trains
             foreach (var item in directTrains)
             {                  
                     VmTrainRoute trainRoute = new VmTrainRoute();
                     trainRoute.TrainName = item.TrainName.Trim() + "->" + item.Station.Trim() + " to " + toStation.Trim();
                     trainRoute.Depart = usercontext.TrainSchedule.Where(x => x.TrainNo == item.TrainNo && x.Station == fromStation).FirstOrDefault().ScheduleTime.ToShortTimeString();
                     trainRoute.Arrival = usercontext.TrainSchedule.Where(x => x.TrainNo == item.TrainNo && x.Station == toStation).FirstOrDefault().ScheduleTime.ToShortTimeString();
-                 
+
+                trainRoute.JourneyHours = usercontext.TrainSchedule.Where(x => x.TrainNo == item.TrainNo && x.Station == fromStation).FirstOrDefault().ScheduleTime.Subtract(usercontext.TrainSchedule.Where(x => x.TrainNo == item.TrainNo && x.Station == toStation).FirstOrDefault().ScheduleTime).ToString();
+                trainRoute.WaitHours = "0 Hours";
                 trainroutes.Add(trainRoute);
                 //trainroutes.  // train.JourneyHours = trainRoute.Arrival.Subtract(trainRoute.Depart);                 
             }
 
+
+            // now calculate Break Journey  
+            foreach (var item in directTrains)
+            {
+                if (item.Station != toStation)
+                {
+
+                    VmTrainRoute trainRoute = new VmTrainRoute();
+                }
+            }
+             
             // assignment
             Trains.TrainRoutes = trainroutes;
 
-            return Json(Trains);
+            dynamic obj = new ExpandoObject();
+            obj.DirectTrain = Trains;
+            obj.Age = 33;             
+            return Json(obj);  
+         
         }
     }
 }

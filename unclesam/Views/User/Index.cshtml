@@ -21,9 +21,10 @@
                 data: data,
                 dataType: 'json',
                 success: function (result) {
+                    console.log(result);                  
                     $('#target').show();
                     $("#result tbody").html('');
-                    $.each(result.trainRoutes, function (key, val) {
+                    $.each(result.DirectTrain.trainRoutes, function (key, val) {                       
                             $("#result tbody").append("<tr><td>" + val.trainName.trim() + "</td><td>" + val.depart + "</td><td>" + val.arrival+"</td><td>0</td></tr>");                         
                         });                     
                      
