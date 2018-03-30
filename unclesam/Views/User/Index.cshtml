@@ -122,17 +122,9 @@
                 @Html.DisplayFor(modelItem => item.Station)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ScheduleTime.TimeOfDay)
+                @Html.Raw(item.ScheduleTime.ToShortTimeString())  ,@Html.Raw(item.ScheduleTime.DayOfWeek)
             </td>
 
-            <td>
-
-                @if (item.Id == 4)
-                {
-                    <i>Next Day</i>
-                }
-
-            </td>
 
         </tr>
     }
