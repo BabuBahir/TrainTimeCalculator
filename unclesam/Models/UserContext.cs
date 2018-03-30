@@ -9,10 +9,12 @@ namespace unclesam.Models
             :base(dbcontextoption)
         { }
 
-        public DbSet<User> Users { get; set; }
-        public DbSet<Role> Roles { get; set; }
-        public DbSet<Country> Country { get; set; }
-        public DbSet<NewsComment> NewsComment { get; set; }
+        //public DbSet<User> Users { get; set; }
+        //public DbSet<Role> Roles { get; set; }
+        //public DbSet<Country> Country { get; set; }
+        //public DbSet<NewsComment> NewsComment { get; set; }
+
+        public DbSet<TrainSchedule> TrainSchedule { get; set; }
     }
 }
 

@@ -1,35 +1,49 @@
 ﻿
-@model IEnumerable<unclesam.Models.User>
+@model IEnumerable<unclesam.Models.TrainSchedule>
 
 @{
-    ViewBag.Title = "User Page";
+    ViewBag.Title = "Train Page";
 }
 
-<h2 class="panel-heading">User Dashboard</h2>
+<h2 class="panel-heading">Train Dashboard</h2>
+ 
 
-<p>
-    <a asp-controller="User" asp-action="Create">New User</a>
-</p>
+
 
 <table class="table table-responsive">
-    <tr> 
-        <th>User Id</th>
-        <th>Name</th>
-        <th>Location</th>
+    <tr>
+        <th>Train SlNo</th>
+        <th>Train Name</th>
+        <th>From</th>
+        <th>ScheduleTime</th>
+        
     </tr>
     @foreach (var item in Model)
     {
-        <tr>
-            <td>
-               @Html.DisplayFor(modelItem=> item.UserId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Location)
-            </td>
-        </tr>
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.TrainNo)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.TrainName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Station)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ScheduleTime.TimeOfDay)
+        </td>
+
+        <td> 
+            
+                @if(item.Id == 4)
+                {
+                    <i>Next Day</i>
+                }
+             
+        </td>
+         
+    </tr>
     }
     
 </table>

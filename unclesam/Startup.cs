@@ -5,6 +5,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using unclesam.Models;
 using Microsoft.EntityFrameworkCore;
+using AutoMapper;
+ 
 
 namespace unclesam
 {
@@ -34,8 +36,11 @@ namespace unclesam
             // Add framework services.
             services.AddApplicationInsightsTelemetry(Configuration);
             services.AddMvc();
+            services.AddAutoMapper();             
 
-            var sqlconnection = @"Server=SANGITA\SQLEXPRESS;Database=Jeancollas;User ID=sa;Password=C1tytech";
+
+
+            var sqlconnection = @"Server=SANGITA\SQLEXPRESS;Database=Rohitas-CodeChallenges;User ID=sa;Password=C1tytech";
             services.AddDbContext<UserContext>(dbcontextoption => dbcontextoption.UseSqlServer(sqlconnection));
         }
 
