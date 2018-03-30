@@ -5,45 +5,144 @@
     ViewBag.Title = "Train Page";
 }
 
-<h2 class="panel-heading">Train Dashboard</h2>
  
+<script>
+    function getTrains(fromStation, toStation) {
+        var fromStation = $("#fromStation option:selected").val();
+        var toStation = $("#toStation option:selected").val();
 
+        if (checkEmptySPaces(fromStation, toStation)) {
 
+            var data = { fromStation: fromStation, toStation: toStation }
+             
+            $.ajax({
+                url: '/User/GetTrainsBetweenStation',
+                type: 'post',
+                data: data,
+                dataType: 'json',
+                success: function (result) {
+                    $('#target').show();
+                    $.each(result.trainRoutes, function (key, val) {
+                            $("#result tbody").append("<tr><td>" + val.trainName.trim() + "</td><td>" + val.depart + "</td><td>" + val.arrival+"</td></tr>");                         
+                        });                     
+                     
+                }                 
+            });
+        }
+        //  checkEmptySPaces
+        // do some stuff
+    }
 
+    function checkEmptySPaces(fromStation, toStation) {
+        var result = true;
+        if (fromStation == "0") {             
+            alert('From Station Cannot Be Blank' );
+            result = false;
+        }
+
+        else if (toStation == "0") {             
+            alert('To Station Cannot Be Blank');
+            result = false;
+        }
+
+        else if (fromStation == toStation) {             
+            alert('From Station Cannot Be equal to To Station');
+            result = false;
+        }
+        return result;
+    }
+</script>
+
+<h2 class="panel-heading">Train Dashboard</h2>
+
+<label> Search Train Between Stations</label>
+<div id="searchBox" class="row" style="width: 50%; margin: 0 auto;">
+
+    <div class="col-lg-3">
+        <label>From Station</label>
+        <select id="fromStation">
+            <option value="0" selected>  From station </option>
+            <option value="Delhi">Delhi</option>
+            <option value="Mumbai">Mumbai</option>
+            <option value="Pune">Pune</option>
+        </select>
+    </div>
+    <div class="col-lg-3">
+        <label>To Station</label>
+        <select id="toStation">
+            <option value="0" selected>  To  station</option>
+            <option value="Delhi">Delhi</option>
+            <option value="Mumbai">Mumbai</option>
+            <option value="Pune">Pune</option>
+        </select>
+    </div>
+    <button type="button" class="btn btn-info" onclick="getTrains()">Go</button>
+</div>
+
+<br />
+
+<div id="target" style="display:none;"  >
+    <p> Following are the trains</p>
+    <table id="result" border=1 class="table">
+        <thead>
+            <tr>
+                <th>Train Name</th>
+                <th>Depart</th>
+                <th>Arrival</th>
+            </tr>
+        </thead>
+
+        <tbody></tbody>
+
+    </table>
+</div>
+
+<br /><br />
 <table class="table table-responsive">
     <tr>
         <th>Train SlNo</th>
         <th>Train Name</th>
         <th>From</th>
         <th>ScheduleTime</th>
-        
+
     </tr>
     @foreach (var item in Model)
     {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.TrainNo)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.TrainName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Station)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ScheduleTime.TimeOfDay)
-        </td>
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.TrainNo)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TrainName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Station)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ScheduleTime.TimeOfDay)
+            </td>
 
-        <td> 
-            
-                @if(item.Id == 4)
+            <td>
+
+                @if (item.Id == 4)
                 {
                     <i>Next Day</i>
                 }
-             
-        </td>
-         
-    </tr>
+
+            </td>
+
+        </tr>
     }
-    
+
 </table>
+
+
+
+<script>
+    $(document).ready(function () {
+        $('select').on('change', function () {
+            //console.log(this.value);
+           // console.log($(this).closest("select").attr("Id"));
+        })
+    })
+</script>

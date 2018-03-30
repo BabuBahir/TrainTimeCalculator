@@ -49,7 +49,47 @@ namespace unclesam.Controllers
         //    }
         //    return View(user);
         //}
-           
+
+        public async Task<IActionResult> GetTrainsBetweenStation(string fromStation , string toStation)
+        {
+            //first get all trains
+            var alltrainsFromSource = usercontext.TrainSchedule.Where(x => x.Station.Equals(fromStation));
+
+            var alltrainsToDestination = usercontext.TrainSchedule.Where(x => x.Station.Equals(toStation));
+
+
+            // first find direct Trains
+         //   var directTrain = alltrainsFromSource.Intersect(alltrainsToDestination);
+
+            var directTrains =  from Item1 in alltrainsFromSource
+                            join Item2 in alltrainsToDestination
+                            on Item1.TrainName equals Item2.TrainName // join on some property
+                                select new TrainSchedule{
+                                        Id=  Item1.Id,
+                                        Station = Item1.Station,
+                                        TrainName= Item1.TrainName,
+                                         TrainNo=Item2.TrainNo
+                                };
+
+            VmTrain Trains = new VmTrain();
+
+            List<VmTrainRoute> trainroutes = new List<VmTrainRoute>();
+            //then check if it is direct train to destination 
+            foreach (var item in directTrains)
+            {                  
+                    VmTrainRoute trainRoute = new VmTrainRoute();
+                    trainRoute.TrainName = item.TrainName.Trim() + " -" + item.Station + " to " + toStation;
+                    trainRoute.Depart = usercontext.TrainSchedule.Where(x => x.TrainNo == item.TrainNo && x.Station == fromStation).FirstOrDefault().ScheduleTime.ToShortTimeString();
+                    trainRoute.Arrival = usercontext.TrainSchedule.Where(x => x.TrainNo == item.TrainNo && x.Station == toStation).FirstOrDefault().ScheduleTime.ToShortTimeString();
+
+
+                trainroutes.Add(trainRoute);
+                   // train.JourneyHours = trainRoute.Arrival.Subtract(trainRoute.Depart);                 
+            }
+            Trains.TrainRoutes = trainroutes;
+
+            return Json(Trains);
+        }
     }
 }
 
