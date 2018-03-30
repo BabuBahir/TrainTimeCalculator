@@ -9,6 +9,8 @@ namespace unclesam.Models
         public string Route { get; set; }
         public string Depart { get; set; }
         public string Arrival { get; set; }
+        public virtual string JourneyHours { get; set; }
+        public virtual string WaitHours { get; set; }
     }
  
 }

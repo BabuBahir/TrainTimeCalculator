@@ -22,8 +22,9 @@
                 dataType: 'json',
                 success: function (result) {
                     $('#target').show();
+                    $("#result tbody").html('');
                     $.each(result.trainRoutes, function (key, val) {
-                            $("#result tbody").append("<tr><td>" + val.trainName.trim() + "</td><td>" + val.depart + "</td><td>" + val.arrival+"</td></tr>");                         
+                            $("#result tbody").append("<tr><td>" + val.trainName.trim() + "</td><td>" + val.depart + "</td><td>" + val.arrival+"</td><td>0</td></tr>");                         
                         });                     
                      
                 }                 
@@ -82,13 +83,14 @@
 <br />
 
 <div id="target" style="display:none;"  >
-    <p> Following are the trains</p>
+    <p> Following are the <strong> Direct </strong> trains</p>
     <table id="result" border=1 class="table">
         <thead>
             <tr>
                 <th>Train Name</th>
                 <th>Depart</th>
                 <th>Arrival</th>
+                <th>Wait Hours</th>
             </tr>
         </thead>
 

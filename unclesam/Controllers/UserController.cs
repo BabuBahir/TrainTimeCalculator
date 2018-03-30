@@ -78,14 +78,15 @@ namespace unclesam.Controllers
             foreach (var item in directTrains)
             {                  
                     VmTrainRoute trainRoute = new VmTrainRoute();
-                    trainRoute.TrainName = item.TrainName.Trim() + " -" + item.Station + " to " + toStation;
+                    trainRoute.TrainName = item.TrainName.Trim() + "->" + item.Station.Trim() + " to " + toStation.Trim();
                     trainRoute.Depart = usercontext.TrainSchedule.Where(x => x.TrainNo == item.TrainNo && x.Station == fromStation).FirstOrDefault().ScheduleTime.ToShortTimeString();
                     trainRoute.Arrival = usercontext.TrainSchedule.Where(x => x.TrainNo == item.TrainNo && x.Station == toStation).FirstOrDefault().ScheduleTime.ToShortTimeString();
-
-
+                 
                 trainroutes.Add(trainRoute);
-                   // train.JourneyHours = trainRoute.Arrival.Subtract(trainRoute.Depart);                 
+                //trainroutes.  // train.JourneyHours = trainRoute.Arrival.Subtract(trainRoute.Depart);                 
             }
+
+            // assignment
             Trains.TrainRoutes = trainroutes;
 
             return Json(Trains);
