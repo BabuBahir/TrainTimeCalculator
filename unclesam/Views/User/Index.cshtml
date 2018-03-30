@@ -32,7 +32,7 @@
 
                     $.each(result.IndirectTrains.trainRoutes, function (key, val) {
                         console.log(val);                         
-                        $("#inDirectTrains tbody").append("<tr><td>" + val.trainName.trim() + "</td><td>" + val.depart + "</td><td>" + val.arrival + "</td><td>" + val.journeyHours + "</td><td>" + val.waitHours+"</td></tr>");
+                        $("#inDirectTrains tbody").append("<tr><td>" + val.trainName.trim() + "</td><td>" + val.depart + "</td><td>" + val.arrival + "</td><td>" + Math.abs(val.journeyHours) + "</td><td>" + val.waitHours+"</td></tr>");
                     });
                 }
             });

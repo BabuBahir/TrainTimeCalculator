@@ -170,8 +170,8 @@ namespace unclesam.Controllers
                             trainRoute.Depart = src.Depart +" - " + src.Arrival;
                             trainRoute.Arrival = dest.Depart + " - " + dest.Arrival;
 
-                            trainRoute.JourneyHours = (dest.dtArrival - src.dtDepart).TotalHours.ToString();
-                            trainRoute.WaitHours = (src.dtDepart - dest.dtArrival).TotalHours.ToString();
+                            trainRoute.JourneyHours = ((Convert.ToInt32(src.JourneyHours) + Convert.ToInt32(dest.JourneyHours) + 1).ToString());  // (int.TryParse(src.JourneyHours) + int.TryParse(src.JourneyHours)).tos; ///  // (((src.dtDepart - src.dtArrival).TotalHours) + ((dest.dtDepart - dest.dtArrival).TotalHours) ).ToString();
+                            trainRoute.WaitHours = " hrs"; // (dest.dtDepart- src.dtArrival).TotalHours.ToString();
                             dummyIndirectRoutes.Add(trainRoute);
                         }
                     }
