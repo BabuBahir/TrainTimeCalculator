@@ -151,8 +151,11 @@ namespace unclesam.Controllers
                     }
                 }
 
+
                  
-                IndirectTrains.TrainRoutes = IndirectTrainRoutesPhase1;
+
+                IEnumerable<VmTrainRoute> union = IndirectTrainRoutesPhase1.Union(IndirectTrainRoutesPhase2);
+                IndirectTrains.TrainRoutes = union.ToList();
 
 
 
