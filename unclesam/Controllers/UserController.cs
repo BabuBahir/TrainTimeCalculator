@@ -54,102 +54,111 @@ namespace unclesam.Controllers
 
         public async Task<IActionResult> GetTrainsBetweenStation(string fromStation , string toStation)
         {
-            //first get all trains            
+            try
+            {
+                //first get all trains            
 
-            var directTrainslist = GetDirectTrains(fromStation, toStation);
+                var directTrainslist = GetDirectTrains(fromStation, toStation);
 
-            VmTrain DirectTrains = new VmTrain();
+                VmTrain DirectTrains = new VmTrain();
 
-            List<VmTrainRoute> trainroutes = new List<VmTrainRoute>();
-            //then check if it is direct train to destination 
+                List<VmTrainRoute> trainroutes = new List<VmTrainRoute>();
+                //then check if it is direct train to destination 
 
-            // these are the direct trains
-            foreach (var item in directTrainslist)
-            {                  
+                // these are the direct trains
+                foreach (var item in directTrainslist)
+                {
                     VmTrainRoute trainRoute = new VmTrainRoute();
                     trainRoute.TrainName = item.TrainName.Trim() + "-> " + item.Station.Trim() + " to " + toStation.Trim();
 
                     DateTime Depart = _dbcontext.TrainSchedule.Where(x => x.TrainNo == item.TrainNo && x.Station == fromStation).FirstOrDefault().ScheduleTime;
                     DateTime Arrival = _dbcontext.TrainSchedule.Where(x => x.TrainNo == item.TrainNo && x.Station == toStation).FirstOrDefault().ScheduleTime;
 
-                    trainRoute.Depart = Depart.ToShortTimeString() +" "+ Depart.ToString("tt", CultureInfo.InvariantCulture) +" ," + Depart.DayOfWeek;
-                    trainRoute.Arrival = Arrival.ToShortTimeString() + " "+ Arrival.ToString("tt", CultureInfo.InvariantCulture) + " ," + Arrival.DayOfWeek;
+                    trainRoute.Depart = Depart.ToShortTimeString() + " " + Depart.ToString("tt", CultureInfo.InvariantCulture) + " ," + Depart.DayOfWeek;
+                    trainRoute.Arrival = Arrival.ToShortTimeString() + " " + Arrival.ToString("tt", CultureInfo.InvariantCulture) + " ," + Arrival.DayOfWeek;
 
-                trainRoute.JourneyHours = ((Arrival - Depart).Hours).ToString();
-                trainroutes.Add(trainRoute);
-                //trainroutes.  // train.JourneyHours = trainRoute.Arrival.Subtract(trainRoute.Depart);                 
-            }
-
-            // assignment
-            DirectTrains.TrainRoutes = trainroutes;
-
-
-            // logic for indirect trains *************************************
-
-
-            VmTrain IndirectTrains = new VmTrain();
-            List<VmTrainRoute> IndirectTrainRoutes = new List<VmTrainRoute>();
-
-            // step 1. get all destination which are neither source nor destination
-            // step 1. calculate incomeing and outgoing trains for there
-
-            var allStations = _dbcontext.TrainSchedule.Select(x => x.Station.Trim()).Distinct();
-
-            List<string> viastations = new List<string>();
-
-            foreach (var viastation in allStations) {
-                if (viastation != fromStation && viastation != toStation)  //mumbai 
-                {
-                    viastations.Add(viastation);
-                    var IndirectrPhase1journey = GetDirectTrains(fromStation , viastation);
-                    var IndirectrPhase2journey = GetDirectTrains(viastation, fromStation);
-
-                    //foreach (var item in IndirectrPhase1journey)
-                    //{
-                    //    VmTrainRoute trainRoute = new VmTrainRoute();
-                    //    trainRoute.TrainName = item.TrainName.Trim() + "-> " + item.Station.Trim() + " to " + toStation.Trim();
-
-                    //    DateTime Depart = _dbcontext.TrainSchedule.Where(x => x.TrainNo == item.TrainNo && x.Station == fromStation).FirstOrDefault().ScheduleTime;
-                    //    DateTime Arrival = _dbcontext.TrainSchedule.Where(x => x.TrainNo == item.TrainNo && x.Station == viastation).FirstOrDefault().ScheduleTime;
-
-                    //    trainRoute.Depart = Depart.ToShortTimeString() + " " + Depart.ToString("tt", CultureInfo.InvariantCulture) + " ," + Depart.DayOfWeek;
-                    //    trainRoute.Arrival = Arrival.ToShortTimeString() + " " + Arrival.ToString("tt", CultureInfo.InvariantCulture) + " ," + Arrival.DayOfWeek;
-
-                    //    trainRoute.JourneyHours = ((Arrival - Depart).Hours).ToString();
-                    //   // IndirectTrainRoutes.Add(trainRoute);
-                    //    //trainroutes.  // train.JourneyHours = trainRoute.Arrival.Subtract(trainRoute.Depart);                 
-                    //}
-
-                    //foreach (var item in IndirectrPhase2journey)
-                    //{
-                    //    VmTrainRoute trainRoute = new VmTrainRoute();
-                    //    trainRoute.TrainName = item.TrainName.Trim() + "-> " + item.Station.Trim() + " to " + toStation.Trim();
-
-                    //    DateTime Depart = _dbcontext.TrainSchedule.Where(x => x.TrainNo == item.TrainNo && x.Station == viastation).FirstOrDefault().ScheduleTime;
-                    //    DateTime Arrival = _dbcontext.TrainSchedule.Where(x => x.TrainNo == item.TrainNo && x.Station == toStation).FirstOrDefault().ScheduleTime;
-
-                    //    trainRoute.Depart = Depart.ToShortTimeString() + " " + Depart.ToString("tt", CultureInfo.InvariantCulture) + " ," + Depart.DayOfWeek;
-                    //    trainRoute.Arrival = Arrival.ToShortTimeString() + " " + Arrival.ToString("tt", CultureInfo.InvariantCulture) + " ," + Arrival.DayOfWeek;
-
-                    //    trainRoute.JourneyHours = ((Arrival - Depart).Hours).ToString();
-                    //   // IndirectTrainRoutes.Add(trainRoute);
-                    //    //trainroutes.  // train.JourneyHours = trainRoute.Arrival.Subtract(trainRoute.Depart);                 
-                    //}
-
+                    trainRoute.JourneyHours = ((Arrival - Depart).Hours).ToString();
+                    trainroutes.Add(trainRoute);
+                    //trainroutes.  // train.JourneyHours = trainRoute.Arrival.Subtract(trainRoute.Depart);                 
                 }
+
+                // assignment
+                DirectTrains.TrainRoutes = trainroutes;
+
+
+                // logic for indirect trains *************************************
+
+
+                VmTrain IndirectTrains = new VmTrain();
+                List<VmTrainRoute> IndirectTrainRoutes = new List<VmTrainRoute>();
+
+                // step 1. get all destination which are neither source nor destination
+                // step 1. calculate incomeing and outgoing trains for there
+
+                var allStations = _dbcontext.TrainSchedule.Select(x => x.Station.Trim()).Distinct();
+
+                List<string> viastations = new List<string>();
+
+                foreach (var viastation in allStations)
+                {
+                    if (viastation != fromStation && viastation != toStation)  //mumbai 
+                    {
+                        viastations.Add(viastation);
+                        var IndirectrPhase1journey = GetDirectTrains(fromStation, viastation);
+                        var IndirectrPhase2journey = GetDirectTrains(viastation, fromStation);
+
+                        foreach (var item in IndirectrPhase1journey)
+                        {
+                            VmTrainRoute trainRoute = new VmTrainRoute();
+                            trainRoute.TrainName = item.TrainName.Trim() + "-> " + item.Station.Trim() + " to " + viastation.Trim();
+
+                            DateTime Depart = _dbcontext.TrainSchedule.Where(x => x.TrainNo == item.TrainNo && x.Station == fromStation).FirstOrDefault().ScheduleTime;
+                            DateTime Arrival = _dbcontext.TrainSchedule.Where(x => x.TrainNo == item.TrainNo && x.Station == viastation).FirstOrDefault().ScheduleTime;
+
+                            trainRoute.Depart = Depart.ToShortTimeString() + " " + Depart.ToString("tt", CultureInfo.InvariantCulture) + " ," + Depart.DayOfWeek;
+                            trainRoute.Arrival = Arrival.ToShortTimeString() + " " + Arrival.ToString("tt", CultureInfo.InvariantCulture) + " ," + Arrival.DayOfWeek;
+
+                            trainRoute.JourneyHours = ((Arrival - Depart).Hours).ToString();
+                            IndirectTrainRoutes.Add(trainRoute);
+                             
+                        }
+
+                        for (int i = 0; i <IndirectrPhase2journey.Count(); i++)
+                        {
+                            var item = IndirectrPhase2journey.ToList()[i];
+                            var trainRoute = IndirectTrainRoutes.ToList()[i];
+
+                            trainRoute.TrainName = trainRoute.TrainName + " // " + item.TrainName.Trim() + "-> " + viastation.Trim() + " to " + toStation.Trim();
+
+                            DateTime Depart = _dbcontext.TrainSchedule.Where(x => x.TrainNo == item.TrainNo && x.Station.Contains(viastation)).FirstOrDefault().ScheduleTime;
+                           // DateTime Arrival = _dbcontext.TrainSchedule.Where(x => x.TrainNo == item.TrainNo && x.Station.Contains(toStation)).FirstOrDefault().ScheduleTime;
+
+                            trainRoute.Depart = Depart.ToShortTimeString() + " " + Depart.ToString("tt", CultureInfo.InvariantCulture) + " ," + Depart.DayOfWeek;
+                            trainRoute.Arrival = "";// Arrival.ToShortTimeString() + " " + Arrival.ToString("tt", CultureInfo.InvariantCulture) + " ," + Arrival.DayOfWeek;
+
+                            trainRoute.JourneyHours = ""; //((Arrival - Depart).Hours).ToString();                             
+                             
+                        }
+
+                    }
+                }
+                IndirectTrains.TrainRoutes = IndirectTrainRoutes;
+
+
+
+
+
+                // return json
+                dynamic obj = new ExpandoObject();
+                obj.DirectTrains = DirectTrains;
+                obj.IndirectTrains = IndirectTrains;      // IndirectTrains   
+                return Json(obj);
+
             }
-          //  IndirectTrains.TrainRoutes = IndirectTrainRoutes;
-
-
-
-
-
-           // return json
-            dynamic obj = new ExpandoObject();
-            obj.DirectTrains = DirectTrains;
-            obj.IndirectTrains = viastations;      // IndirectTrains   
-            return Json(obj);  
-         
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         private IQueryable<TrainSchedule> GetDirectTrains(string fromStation, string toStation)

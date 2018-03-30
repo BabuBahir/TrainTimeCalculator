@@ -23,16 +23,16 @@
                 success: function (result) {
 
                     $('#target').show();
-                    $("#result tbody").html(''); viaStation
-                    $("#viaStation").html('');
+                    $("#directTrains tbody").html('');  
+                    $("#inDirectTrains tbody").html('');
                     $.each(result.DirectTrains.trainRoutes, function (key, val) {
 
-                        $("#result tbody").append("<tr><td>" + val.trainName.trim() + "</td><td>" + val.depart + "</td><td>" + val.arrival + "</td><td>" + val.journeyHours + "</td></tr>");
+                        $("#directTrains tbody").append("<tr><td>" + val.trainName.trim() + "</td><td>" + val.depart + "</td><td>" + val.arrival + "</td><td>" + val.journeyHours + "</td></tr>");
                     });
 
-                    $.each(result.IndirectTrains, function (key, val) {
-                        console.log(val);
-                        $("#viaStation").append("<a href='#'>" + val + "</a>");
+                    $.each(result.IndirectTrains.trainRoutes, function (key, val) {
+                        console.log(val);                         
+                        $("#inDirectTrains tbody").append("<tr><td>" + val.trainName.trim() + "</td><td>" + val.depart + "</td><td>" + val.arrival + "</td><td>" + val.journeyHours + "</td></tr>");
                     });
                 }
             });
@@ -91,7 +91,7 @@
 
 <div id="target" style="display:none;">
     <p> Following are the <strong> Direct </strong> trains</p>
-    <table id="result" border=1 class="table">
+    <table id="directTrains" border=1 class="table">
         <thead>
             <tr>
                 <th>Train Name</th>
@@ -106,8 +106,20 @@
     </table>
 
     <br />
-    <p> Break Journey From The Following Destinations</p>
-    <div id="viaStation"></div>
+    <p> Break Journey From The Following Destinations</p>     
+    <table id="inDirectTrains" border=1 class="table">
+        <thead>
+            <tr>
+                <th>Train Name</th>
+                <th>Depart</th>
+                <th>Arrival</th>
+                <th>Duration</th>
+            </tr>
+        </thead>
+
+        <tbody></tbody>
+
+    </table>
 
 </div>
 
