@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Dynamic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -86,10 +87,10 @@ namespace unclesam.Controllers
                     DateTime Depart = _dbcontext.TrainSchedule.Where(x => x.TrainNo == item.TrainNo && x.Station == fromStation).FirstOrDefault().ScheduleTime;
                     DateTime Arrival = _dbcontext.TrainSchedule.Where(x => x.TrainNo == item.TrainNo && x.Station == toStation).FirstOrDefault().ScheduleTime;
 
-                    trainRoute.Depart = Depart.ToShortTimeString() +" ," + Depart.DayOfWeek;
-                    trainRoute.Arrival = Arrival.ToShortTimeString() + " ," + Arrival.DayOfWeek;    
-                                  
-                trainRoute.WaitHours = "0 Hours";
+                    trainRoute.Depart = Depart.ToShortTimeString() +" "+ Depart.ToString("tt", CultureInfo.InvariantCulture) +" ," + Depart.DayOfWeek;
+                    trainRoute.Arrival = Arrival.ToShortTimeString() + " "+ Arrival.ToString("tt", CultureInfo.InvariantCulture) + " ," + Arrival.DayOfWeek;
+
+                trainRoute.JourneyHours = ((Arrival - Depart).Hours).ToString();
                 trainroutes.Add(trainRoute);
                 //trainroutes.  // train.JourneyHours = trainRoute.Arrival.Subtract(trainRoute.Depart);                 
             }
