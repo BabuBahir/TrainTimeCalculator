@@ -12,12 +12,13 @@ namespace unclesam.Controllers
     {
         private UserContext usercontext;
 
+
         public UserController(UserContext context)
         {
             usercontext = context;
         }
 
-
+        [Route("")]
         // GET: /<controller>/
         public IActionResult Index()
         {
@@ -74,6 +75,19 @@ namespace unclesam.Controllers
                 throw ex;
             }
 
+        }
+
+        public async Task<IActionResult> GetAllNewsComment()
+        {
+            var listNewsComments = usercontext.NewsComment.ToList();
+
+            List<VmNewsComment> VmNewsComments = new List<VmNewsComment>();
+
+            foreach (var item in listNewsComments)
+            {
+
+            }
+            return View();
         }
     }
 }
