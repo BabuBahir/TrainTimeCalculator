@@ -90,7 +90,8 @@ namespace unclesam.Controllers
 
 
                 VmTrain IndirectTrains = new VmTrain();
-                List<VmTrainRoute> IndirectTrainRoutes = new List<VmTrainRoute>();
+                List<VmTrainRoute> IndirectTrainRoutesPhase1 = new List<VmTrainRoute>();
+                List<VmTrainRoute> IndirectTrainRoutesPhase2 = new List<VmTrainRoute>();
 
                 // step 1. get all destination which are neither source nor destination
                 // step 1. calculate incomeing and outgoing trains for there
@@ -120,17 +121,19 @@ namespace unclesam.Controllers
                             trainRoute.Depart = Depart.ToShortTimeString() + " " + Depart.ToString("tt", CultureInfo.InvariantCulture) + " ," + Depart.DayOfWeek;
                             trainRoute.Arrival = Arrival.ToShortTimeString() + " " + Arrival.ToString("tt", CultureInfo.InvariantCulture) + " ," + Arrival.DayOfWeek;
 
+                            trainRoute.Destination = viastation;
                             trainRoute.JourneyHours = ((Arrival - Depart).Hours).ToString();
-                            IndirectTrainRoutes.Add(trainRoute);
+                            IndirectTrainRoutesPhase1.Add(trainRoute);
                              
                         }
-                         
+                                               
                         //mumbai -> pune
-                        for (int i=0; i < IndirectrPhase2journey.Count(); i++)
-                        {
-                            var item = IndirectrPhase2journey.ToList().ElementAt(i);
+                        foreach(var item in IndirectrPhase2journey)
+                        {                             
 
                             VmTrainRoute trainRoute = new VmTrainRoute();
+                             
+
                             trainRoute.TrainName = item.TrainName.Trim() + "-> " + item.Station.Trim() + " to " + toStation.Trim();
 
                             DateTime Depart = _dbcontext.TrainSchedule.Where(x => x.TrainNo == item.TrainNo && x.Station == viastation).FirstOrDefault().ScheduleTime;
@@ -138,15 +141,18 @@ namespace unclesam.Controllers
 
                             trainRoute.Depart = Depart.ToShortTimeString() + " " + Depart.ToString("tt", CultureInfo.InvariantCulture) + " ," + Depart.DayOfWeek;
                             trainRoute.Arrival = Arrival.ToShortTimeString() + " " + Arrival.ToString("tt", CultureInfo.InvariantCulture) + " ," + Arrival.DayOfWeek;
-
+                            trainRoute.Destination = item.Station.Trim();
                             trainRoute.JourneyHours = ((Arrival - Depart).Hours).ToString();
-                            IndirectTrainRoutes.Add(trainRoute);
+                            // IndirectTrainRoutesPhase1.Add(trainRoute);
+                            IndirectTrainRoutesPhase2.Add(trainRoute);
 
                         }
 
                     }
                 }
-                IndirectTrains.TrainRoutes = IndirectTrainRoutes;
+
+                 
+                IndirectTrains.TrainRoutes = IndirectTrainRoutesPhase1;
 
 
 
