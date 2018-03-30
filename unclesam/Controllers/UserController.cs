@@ -54,24 +54,9 @@ namespace unclesam.Controllers
 
         public async Task<IActionResult> GetTrainsBetweenStation(string fromStation , string toStation)
         {
-            //first get all trains
-            var alltrainsFromSource = _dbcontext.TrainSchedule.Where(x => x.Station.Equals(fromStation));
+            //first get all trains            
 
-            var alltrainsToDestination = _dbcontext.TrainSchedule.Where(x => x.Station.Equals(toStation));
-
-
-            // first find direct Trains
-         //   var directTrain = alltrainsFromSource.Intersect(alltrainsToDestination);
-
-            var directTrainslist =  from Item1 in alltrainsFromSource
-                                join Item2 in alltrainsToDestination
-                                on Item1.TrainName equals Item2.TrainName // join on some property
-                                    select new TrainSchedule{
-                                            Id=  Item1.Id,
-                                            Station = Item1.Station,
-                                            TrainName= Item1.TrainName,
-                                             TrainNo=Item2.TrainNo
-                                    };
+            var directTrainslist = GetDirectTrains(fromStation, toStation);
 
             VmTrain DirectTrains = new VmTrain();
 
@@ -104,6 +89,7 @@ namespace unclesam.Controllers
 
             VmTrain IndirectTrains = new VmTrain();
             List<VmTrainRoute> IndirectTrainRoutes = new List<VmTrainRoute>();
+
             // step 1. get all destination which are neither source nor destination
             // step 1. calculate incomeing and outgoing trains for there
 
@@ -115,11 +101,9 @@ namespace unclesam.Controllers
                 if (viastation != fromStation && viastation != toStation)  //mumbai 
                 {
                     viastations.Add(viastation);
-                    foreach (var train in alltrainsFromSource)
-                    {
-                       // var alltrainsToViaStationFromSource =  _dbcontext.TrainSchedule.Where(x => x.TrainNo == train.TrainNo).ToList();
-                        
-                    }                                          
+
+                    var alltrainsViaStation = _dbcontext.TrainSchedule.Where(x => x.Station.Equals(viastation));
+                                                                                 
                 }
             }
             IndirectTrains.TrainRoutes = IndirectTrainRoutes;
@@ -131,9 +115,32 @@ namespace unclesam.Controllers
            // return json
             dynamic obj = new ExpandoObject();
             obj.DirectTrains = DirectTrains;
-            obj.IndirectTrains = viastations;             
+            obj.IndirectTrains = viastations;      // IndirectTrains   
             return Json(obj);  
          
+        }
+
+        private IQueryable<TrainSchedule> GetDirectTrains(string fromStation, string toStation)
+        {
+            //first get all trains
+            var alltrainsFromSource = _dbcontext.TrainSchedule.Where(x => x.Station.Equals(fromStation));
+
+            var alltrainsToDestination = _dbcontext.TrainSchedule.Where(x => x.Station.Equals(toStation));
+
+            var GetDirectTrainList = from Item1 in alltrainsFromSource
+                      join Item2 in alltrainsToDestination
+                      on Item1.TrainName equals Item2.TrainName // join on some property
+                      select new TrainSchedule
+                      {
+                          Id = Item1.Id,
+                          Station = Item1.Station,
+                          TrainName = Item1.TrainName,
+                          TrainNo = Item2.TrainNo
+                      };
+
+            return GetDirectTrainList;
+
+
         }
     }
 }
