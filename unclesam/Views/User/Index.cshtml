@@ -1,0 +1,35 @@
+﻿
+@model IEnumerable<unclesam.Models.User>
+
+@{
+    ViewBag.Title = "User Page";
+}
+
+<h2 class="panel-heading">User Dashboard</h2>
+
+<p>
+    <a asp-controller="User" asp-action="Create">New User</a>
+</p>
+
+<table class="table table-responsive">
+    <tr> 
+        <th>User Id</th>
+        <th>Name</th>
+        <th>Location</th>
+    </tr>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+               @Html.DisplayFor(modelItem=> item.UserId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Location)
+            </td>
+        </tr>
+    }
+    
+</table>
