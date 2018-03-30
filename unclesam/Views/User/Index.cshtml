@@ -21,13 +21,18 @@
                 data: data,
                 dataType: 'json',
                 success: function (result) {
-                    console.log(result);                  
+                                
                     $('#target').show();
-                    $("#result tbody").html('');
+                    $("#result tbody").html(''); viaStation
+                    $("#viaStation").html('');
                     $.each(result.DirectTrains.trainRoutes, function (key, val) {                       
                             $("#result tbody").append("<tr><td>" + val.trainName.trim() + "</td><td>" + val.depart + "</td><td>" + val.arrival+"</td><td>0</td></tr>");                         
                         });                     
-                     
+
+                    $.each(result.IndirectTrains, function (key, val) {
+                        console.log(val);      
+                        $("#viaStation").append("<a href='#'>"+ val +"</a>");
+                    });
                 }                 
             });
         }
@@ -83,7 +88,7 @@
 
 <br />
 
-<div id="target" style="display:none;"  >
+<div id="target" style="display:none;">
     <p> Following are the <strong> Direct </strong> trains</p>
     <table id="result" border=1 class="table">
         <thead>
@@ -98,6 +103,11 @@
         <tbody></tbody>
 
     </table>
+
+    <br />
+    <p> Break Journey From The Following Destinations</p>
+    <div id="viaStation"></div>
+
 </div>
 
 <br /><br />

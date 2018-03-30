@@ -108,19 +108,17 @@ namespace unclesam.Controllers
 
             var allStations = _dbcontext.TrainSchedule.Select(x => x.Station.Trim()).Distinct();
 
+            List<string> viastations = new List<string>();
+
             foreach (var viastation in allStations) {
                 if (viastation != fromStation && viastation != toStation)  //mumbai 
                 {
+                    viastations.Add(viastation);
                     foreach (var train in alltrainsFromSource)
                     {
-                        var alltrainsToViaStationFromSource =  _dbcontext.TrainSchedule.Where(x => x.TrainNo == train.TrainNo).ToList();
-
-                        foreach (var item in alltrainsToViaStationFromSource)
-                        {
-                             
-                        }
-                    }                     
-                     
+                       // var alltrainsToViaStationFromSource =  _dbcontext.TrainSchedule.Where(x => x.TrainNo == train.TrainNo).ToList();
+                        
+                    }                                          
                 }
             }
             IndirectTrains.TrainRoutes = IndirectTrainRoutes;
@@ -132,7 +130,7 @@ namespace unclesam.Controllers
            // return json
             dynamic obj = new ExpandoObject();
             obj.DirectTrains = DirectTrains;
-            obj.IndirectTrains = IndirectTrains;             
+            obj.IndirectTrains = viastations;             
             return Json(obj);  
          
         }
