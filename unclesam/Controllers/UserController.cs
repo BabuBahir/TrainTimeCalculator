@@ -62,7 +62,7 @@ namespace unclesam.Controllers
             // first find direct Trains
          //   var directTrain = alltrainsFromSource.Intersect(alltrainsToDestination);
 
-            var directTrains =  from Item1 in alltrainsFromSource
+            var directTrainslist =  from Item1 in alltrainsFromSource
                                 join Item2 in alltrainsToDestination
                                 on Item1.TrainName equals Item2.TrainName // join on some property
                                     select new TrainSchedule{
@@ -72,13 +72,13 @@ namespace unclesam.Controllers
                                              TrainNo=Item2.TrainNo
                                     };
 
-            VmTrain Trains = new VmTrain();
+            VmTrain DirectTrains = new VmTrain();
 
             List<VmTrainRoute> trainroutes = new List<VmTrainRoute>();
             //then check if it is direct train to destination 
 
             // these are the direct trains
-            foreach (var item in directTrains)
+            foreach (var item in directTrainslist)
             {                  
                     VmTrainRoute trainRoute = new VmTrainRoute();
                     trainRoute.TrainName = item.TrainName.Trim() + "-> " + item.Station.Trim() + " to " + toStation.Trim();
@@ -86,42 +86,30 @@ namespace unclesam.Controllers
                     DateTime Depart = usercontext.TrainSchedule.Where(x => x.TrainNo == item.TrainNo && x.Station == fromStation).FirstOrDefault().ScheduleTime;
                     DateTime Arrival = usercontext.TrainSchedule.Where(x => x.TrainNo == item.TrainNo && x.Station == toStation).FirstOrDefault().ScheduleTime;
 
-                    trainRoute.Depart = Depart.ToShortTimeString();
-
-                TimeSpan diff = (Arrival -  Depart);
-                double hours = diff.TotalHours;
-                if (hours < 24)
-                {
-                    trainRoute.Arrival = Arrival.ToShortTimeString();
-                }
-                else {
-                    trainRoute.Arrival = Arrival.ToShortTimeString() + " <i>nextday </i>";
-                }
-
+                    trainRoute.Depart = Depart.ToShortTimeString() +" ," + Depart.DayOfWeek;
+                    trainRoute.Arrival = Arrival.ToShortTimeString() + " ," + Arrival.DayOfWeek;    
+                 
                 trainRoute.JourneyHours = usercontext.TrainSchedule.Where(x => x.TrainNo == item.TrainNo && x.Station == fromStation).FirstOrDefault().ScheduleTime.Subtract(usercontext.TrainSchedule.Where(x => x.TrainNo == item.TrainNo && x.Station == toStation).FirstOrDefault().ScheduleTime).ToString();
                 trainRoute.WaitHours = "0 Hours";
                 trainroutes.Add(trainRoute);
                 //trainroutes.  // train.JourneyHours = trainRoute.Arrival.Subtract(trainRoute.Depart);                 
             }
 
-
-            // now calculate Break Journey  
-            foreach (var item in directTrains)
-            {
-                // means not a direct train
-                if (item.Station.Trim() != toStation)
-                {
-
-                    VmTrainRoute trainRoute = new VmTrainRoute();
-                }
-            }
-             
             // assignment
-            Trains.TrainRoutes = trainroutes;
+            DirectTrains.TrainRoutes = trainroutes;
 
+
+            // logic for indirect trains
+
+
+
+
+
+
+            // return json
             dynamic obj = new ExpandoObject();
-            obj.DirectTrain = Trains;
-            obj.InddirectTrain = 33;             
+            obj.DirectTrains = DirectTrains;
+            obj.IndirectTrain = null;             
             return Json(obj);  
          
         }
