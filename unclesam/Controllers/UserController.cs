@@ -120,7 +120,10 @@ namespace unclesam.Controllers
 
                             trainRoute.Depart = Depart.ToShortTimeString() + " " + Depart.ToString("tt", CultureInfo.InvariantCulture) + " ," + Depart.DayOfWeek;
                             trainRoute.Arrival = Arrival.ToShortTimeString() + " " + Arrival.ToString("tt", CultureInfo.InvariantCulture) + " ," + Arrival.DayOfWeek;
-                             
+
+                            trainRoute.dtDepart = Depart;
+                            trainRoute.dtArrival = Arrival;
+
                             trainRoute.Destination = viastation;
                             trainRoute.JourneyHours = ((Arrival - Depart).Hours).ToString();
                             IndirectTrainRoutesPhase1.Add(trainRoute);
@@ -141,9 +144,12 @@ namespace unclesam.Controllers
 
                             trainRoute.Depart = Depart.ToShortTimeString() + " " + Depart.ToString("tt", CultureInfo.InvariantCulture) + " ," + Depart.DayOfWeek;
                             trainRoute.Arrival = Arrival.ToShortTimeString() + " " + Arrival.ToString("tt", CultureInfo.InvariantCulture) + " ," + Arrival.DayOfWeek;
+
+                            trainRoute.dtDepart = Depart;
+                            trainRoute.dtArrival = Arrival;
+
                             trainRoute.Source = item.Station.Trim();                             
-                            trainRoute.JourneyHours = ((Arrival - Depart).Hours).ToString();
-                            // IndirectTrainRoutesPhase1.Add(trainRoute);
+                            trainRoute.JourneyHours = ((Arrival - Depart).Hours).ToString();                             
                             IndirectTrainRoutesPhase2.Add(trainRoute);
 
                         }
@@ -161,9 +167,11 @@ namespace unclesam.Controllers
                         {
                             VmTrainRoute trainRoute = new VmTrainRoute();
                             trainRoute.TrainName = src.TrainName + "  // " +dest.TrainName;
-                            trainRoute.Depart = src.Depart;
-                            trainRoute.Arrival = dest.Arrival;
-                            trainRoute.JourneyHours = (Int32.Parse(src.JourneyHours) + Int32.Parse(dest.JourneyHours)).ToString();
+                            trainRoute.Depart = src.Depart +" - " + src.Arrival;
+                            trainRoute.Arrival = dest.Depart + " - " + dest.Arrival;
+
+                            trainRoute.JourneyHours = (dest.dtArrival - src.dtDepart).TotalHours.ToString();
+                            trainRoute.WaitHours = (src.dtDepart - dest.dtArrival).TotalHours.ToString();
                             dummyIndirectRoutes.Add(trainRoute);
                         }
                     }
